@@ -1,0 +1,53 @@
+name: fc-3.0-desafio-node
+
+networks:
+  node-network:
+    driver: bridge
+
+services:
+  db:
+    container_name: db
+    image: mysql:5.7
+    platform: linux/amd64
+    command: --innodb-use-native-aio=0
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db
+    volumes:
+      - ./mysql:/var/lib/mysql
+    networks:
+      - node-network
+    healthcheck:
+      test:
+        ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+
+  app:
+    container_name: app
+    build:
+      context: node
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    networks:
+      - node-network
+
+  nginx:
+    container_name: nginx
+    build:
+      context: nginx
+    ports:
+      - "8080:80"
+    depends_on:
+      - app
+    networks:
+      - node-network
+
+version: "3.1"
