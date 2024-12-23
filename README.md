@@ -123,7 +123,10 @@ app:
   ports:
     - "3000:3000"
   depends_on:
-    - db
+    db:
+      condition: service_healthy
+  volumes:
+    - ./node:/app
   networks:
     - node-network
 ```
