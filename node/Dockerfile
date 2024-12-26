@@ -8,8 +8,6 @@ RUN chown -R node:node /app
 
 USER node
 
-RUN npm i
-
 COPY . .
 
 EXPOSE 3000
