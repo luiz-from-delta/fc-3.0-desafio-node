@@ -14,4 +14,4 @@ COPY . .
 
 EXPOSE 3000
 
-ENTRYPOINT [ "node", "index.js" ]
+ENTRYPOINT [ "sh", "-c", "npm install && node index.js" ]
