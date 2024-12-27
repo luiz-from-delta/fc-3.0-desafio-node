@@ -14,6 +14,26 @@ const connectionConfig = {
 
 app.use(express.json());
 
+function createPeopleTable() {
+  const connection = mysql.createConnection(connectionConfig);
+
+  const sql = `
+create table if not exists people (
+  id int not null auto_increment,
+  name varchar(255) not null,
+
+  primary key (id)
+);`;
+
+  connection.query(sql, (err) => {
+    connection.end();
+
+    if (err) {
+      console.error(err);
+    }
+  });
+}
+
 function execute(sql, values) {
   return new Promise((resolve, reject) => {
     const connection = mysql.createConnection(connectionConfig);
@@ -58,6 +78,8 @@ app.post("/people", async (req, res) => {
     res.status(500).send("Houve um erro ao criar a pessoa!");
   }
 });
+
+createPeopleTable();
 
 app.listen(PORT, () => {
   console.info(`Server running at port ${PORT}...`);
